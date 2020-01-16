@@ -1,0 +1,6 @@
+- content_desc: "打开抽屉式导航栏"
+- order: 1
+  id: "cc.imzbb.timemeter:id/design_menu_item_text"
+- id: "android:id/search_button"
+- id: "android:id/search_src_text"
+  input: "hello"
