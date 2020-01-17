@@ -9,9 +9,12 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 import yaml  # PyYaml
 
+from src.TestCase import TestCase
+
 
 class TestTimemeter:
-    # 获取app的activity：adb shell dumpsys activity top
+    # 获取app的package: adb shell dumpsys window | grep mCurrent
+    # 获取app的launcher activity: adb shell monkey -p {appPackage} -vvv 1
     # $ANDROID_HOME 配置了吗？appium运行会调用这个。
 
     # 参数化读取文件
@@ -67,7 +70,20 @@ class TestTimemeter:
 
     # 数据驱动
     def test_gallary_from_testcase(self):
-        TestCase("testcase.yaml").run(self.driver)
+        TestCase("tc_timemeter.yaml").run(self.driver)
+
+    def test_webview(self):
+        el1 = self.driver.find_element_by_accessibility_id("打开抽屉式导航栏")
+        el1.click()
+        # el2 = self.driver.find_elements_by_id("cc.imzbb.timemeter:id/design_menu_item_text")[4]
+        el2 = self.driver.find_element_by_xpath("//*[@text='Share']")
+        el2.click()
+        for i in range(5):
+            print(self.driver.contexts)
+        el3 = self.driver.find_element_by_xpath("//*[@text='Github']")
+        el3.click()
+        sleep(5)
+
 
     def test_timemeter(self):
         el1 = self.driver.find_element_by_id("cc.imzbb.timemeter:id/fab")
@@ -104,31 +120,3 @@ class TestTimemeter:
     def teardown(self):
         # pass
         self.driver.quit()
-
-
-class TestCase:
-    def __init__(self, path):
-        file = open(path, "r")
-        self.steps = yaml.safe_load(file)
-
-    def run(self, driver: WebDriver):
-        for step in self.steps:
-            if isinstance(step, dict):
-                # 先找到对象
-                if "order" in step.keys():
-                    if "id" in step.keys():
-                        element = driver.find_elements_by_id(step["id"])[step["order"]]
-                elif "id" in step.keys():
-                    element = driver.find_element_by_id(step["id"])
-                elif "xpath" in step.keys():
-                    element = driver.find_element_by_xpath(step["xpath"])
-                elif "content_desc" in step.keys():
-                    element = driver.find_element_by_accessibility_id(step["content_desc"])
-                else:
-                    print(step.keys())
-
-                # 然后对对象进行操作
-                if "input" in step.keys():
-                    element.send_keys(step["input"])
-                else:
-                    element.click()

@@ -1,0 +1,7 @@
+#- id: android:id/button2
+- content_desc: "定制学"
+- text: "进入课程"
+- id: com.liulishuo.engzo:id/view_icon_background
+- wait: 10
+  id: com.liulishuo.engzo:id/audio_player
+#- id: com.liulishuo.engzo:id/recorder
